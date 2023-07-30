@@ -1,0 +1,3 @@
+cargo:rerun-if-changed=build/main.rs
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/Users/amysiton/Sites/Solana/solana_payload/target/debug/build/typenum-d66a4a005126cc62/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/Users/amysiton/Sites/Solana/solana_payload/target/debug/build/typenum-d66a4a005126cc62/out/op.rs
