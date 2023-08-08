@@ -1,3 +1,3 @@
-/node_modules
-.env
+/bootcamp-day-1-2/node_modules
+/bootcamp-day-1-2/.env
 .DS_Store
