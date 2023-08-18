@@ -1,3 +1,7 @@
 /bootcamp-day-1-2/node_modules
 /bootcamp-day-1-2/.env
+/bak
+/dapp/test-ledger
 .DS_Store
+/dapp/dapp_anchor/node_modules
+/src

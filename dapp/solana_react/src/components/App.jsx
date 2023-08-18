@@ -1,26 +1,38 @@
 import React, { useMemo } from "react";
-// import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
-// import { PhantomWallerAdapter} from "@solana/wallet-adapter-wallets";
-// import { PostProvider } from "src/components/PostProvider";
-import { Router } from "../routes/Routes";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { PhantomWalletAdapter, SolflareWalletAdapter, SolletWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { clusterApiUrl } from "@solana/web3.js";
 
-const App = () => {
-  // const endpoint = "https://twilight-newest-pallet.solana-devnet.discover.quiknode.pro/04fcd150a1a621e8501fc924a4041b53d6f24a14/";
-  // const wallets = useMemo(() => [
-  //   new PhantomWallerAdapter(),
-  // ],
-  // []
-  // );
+const App = ({ children }) => {
+  const network = WalletAdapterNetwork.Devnet;
+
+  const endpoint = useMemo(() => {
+    if (network === WalletAdapterNetwork.Devnet) {
+      return "https://api.devnet.solana.com";
+    }
+
+    return clusterApiUrl(network);
+  }, [network]);
+
+  const wallets = useMemo(() => [
+    new PhantomWalletAdapter(), 
+    new SolletWalletAdapter(),
+    new SolflareWalletAdapter({ network }), 
+  ], 
+  [network]);
+
 
   return (
       <>
-        {/* <ConnectionProvider endpoint={endpoint}> */}
-        {/* <WalletProvider wallets={wallets} autoConnect> */}
-        
-        <Router />
-        
-        {/* </WalletProvider>
-        </ConnectionProvider> */}
+        <ConnectionProvider endpoint={endpoint}>
+          <WalletProvider wallets={wallets} autoConnect>
+            <WalletModalProvider>
+              {children}
+            </WalletModalProvider>
+          </WalletProvider>
+        </ConnectionProvider>
       </>
   );
 }

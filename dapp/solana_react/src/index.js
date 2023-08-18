@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './assets/input.css';
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
+import { PostDashboard } from "./pages/PostDashboard";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <App>
+      <PostDashboard/>
+    </App>
   </React.StrictMode>
 );
 
