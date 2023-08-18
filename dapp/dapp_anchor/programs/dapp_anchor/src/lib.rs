@@ -9,7 +9,6 @@ pub mod dapp_anchor {
     pub fn add_post(ctx: Context<AddPost>, _content: String, _date: String) -> Result<()> {
         let post_account = &mut ctx.accounts.post_account;
 
-        post_account.authority = ctx.accounts.authority.key();
         post_account.content = _content;
         post_account.date = _date;
         
@@ -20,11 +19,11 @@ pub mod dapp_anchor {
 #[derive(Accounts)]
 #[instruction()]
 pub struct AddPost<'info> {
+    #[account(init, payer=authority, space = 9000 )]
+    pub post_account: Account<'info, PostAccount>,
+
     #[account(mut)]
     pub authority: Signer<'info>,
-
-    #[account(init, payer=authority, space = 8 + std::mem::size_of::<PostAccount>() )]
-    pub post_account: Account<'info, PostAccount>,
 
     pub system_program: Program<'info, System>,
 }
@@ -32,7 +31,6 @@ pub struct AddPost<'info> {
 
 #[account]
 pub struct PostAccount {
-    pub authority: Pubkey,
     pub content: String,
     pub date: String,
 }

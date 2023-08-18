@@ -14,13 +14,17 @@ export function usePost() {
     const { connection } = useConnection();
     const { wallet } = useWallet(); // for UI state e.g: wallet name, wallet connected
     const anchorWallet = useAnchorWallet(); // for AnchorProvider
-    const postAccount = Keypair.generate();
+    
+    const programId = new anchor.web3.PublicKey(idl.metadata.address);
+
+    // console.log("20 ", programId.toString(), baseAccount.publicKey.toString());
 
     const [transactionPending, setTransactionPending] = useState(false);
     const [loading, setLoading] = useState(true);
     const [post, setPost] = useState([]);
     const [value, setValue] = useState("");
     const [date, setDate] = useState("");
+    window.Buffer = buffer.Buffer;
     
     // console.log("25 ", anchorWallet);;
 
@@ -48,32 +52,34 @@ export function usePost() {
     const addPost = async() => {
         const provider = getProvider();
         const program = getProgram(provider);
-        const [profilePda, _profileBump] = findProgramAddressSync(
-            [anchorWallet.publicKey.toBytes()], 
-            postAccount.publicKey
-        );
-
-        // const profile = 
+        const baseAccount = Keypair.generate();
 
         try {
             setTransactionPending(true);
 
-            setPost([{
-                content: value,
-                date: date
-            }]);
-
-            console.log("62 prog ", program);
+            // console.log("62 wallet: ", anchorWallet);
             const tx = await program.methods
-                .addPost([provider.wallet.publicKey, value, date])
+                .addPost(value, date)
                 .accounts({
-                    postAccount: profilePda.publicKey,
-                    authority: provider.wallet.publicKey,
-                    systemProgram: SystemProgram.programId,
+                    postAccount: baseAccount.publicKey,
+                    authority: new anchor.web3.PublicKey(anchorWallet.publicKey),   
+                    systemProgram: SystemProgram.programId,         
                 })
+                .signers([baseAccount])
                 .rpc();
 
-                console.log("57 Transaction Signature: ", tx);
+                console.log("99 Transaction Signature: ", tx);
+
+                const account = await program.account.postAccount.fetch(new anchor.web3.PublicKey(baseAccount.publicKey));
+
+                console.log("94 account posts: ", account);
+
+                // // setPost(account);
+                // console.log("97 ",post);
+                posts.unshift([account]);
+
+                console.table("100 ", posts);
+                
         } catch(err) {
             console.log(err)
         } finally {
@@ -82,21 +88,27 @@ export function usePost() {
     }
 
     const getPost = async() => {
+        console.log("get post")
         const provider = getProvider();
         const program = getProgram(provider);
         const [profilePda, _profileBump] = findProgramAddressSync(
-            [wallet.publicKey.toBytes()], 
-            postAccount.publicKey
+            [
+                anchor.utils.bytes.utf8.encode("post"),
+                anchorWallet.publicKey.toBuffer(),
+            ],
+            programId
         );
 
         try {
             setTransactionPending(true);
 
-            const account = await program.account.postAccount.fetch(profilePda.publicKey);
+            const account = await program.account.postAccount.fetch(profilePda);
 
             // setPost(account);
-            console.log("84 account posts: ", account);
+            console.log(post);
             posts.unshift([post]);
+            
+            console.log("84 account posts: ", account);
 
         } catch(err) {
             console.log(err);
@@ -112,14 +124,9 @@ export function usePost() {
         // console.log("99 value: ", value);
     } 
 
-    useEffect(() => {
-        if (wallet.connected) getPost();
-
-        // console.table(posts);
-
-        // console.log(program().methods);
-
-      }, [post, wallet.connected]);
+    // useEffect(() => {
+    //     if (wallet.connected) getPost();
+    // }, []);
 
     return { addPost, getPost, handleInputChange, transactionPending, loading, posts, post }
 }

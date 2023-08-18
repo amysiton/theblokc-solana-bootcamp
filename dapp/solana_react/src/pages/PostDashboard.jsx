@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 
 export const PostDashboard = () => {
     // const {connected, select} = useWallet();
-    const { addPost, getPost, handleInputChange, transactionPending, loading, posts, post } = usePost();
+    const { addPost, getPost, handleInputChange, transactionPending, loading, posts, post, initialize } = usePost();
 
     const wallet = useWallet();
     // window.Buffer = buffer.Buffer;
@@ -15,12 +15,8 @@ export const PostDashboard = () => {
     // window.Buffer = buffer.Buffer;
 
     useEffect(() => {
-        if (!loading && posts.length) {
-            getPost();
-        }
-
-        // console.log("19 posts ", posts)
-    });
+        // getPost();
+    },);
 
     return (
         <div className="app h-screen bg-slate-950 w-full max-w-full">
@@ -29,6 +25,13 @@ export const PostDashboard = () => {
             { wallet.connected ? (
                 <>
                     <div className="form w-1/3 bg-white p-4 mx-auto">
+                    <input 
+                        className="btn-create bg-violet-600 hover:bg-violet-800 mt-4 px-4 py-2 font-semibold text-sm bg-violet-500 text-white rounded-full shadow-sm hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
+                        onClick={getPost}
+                        value="Refresh"
+                        type="button"
+                    />
+
                         <form>
                             <label className="block">
                                 <textarea 

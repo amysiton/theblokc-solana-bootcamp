@@ -6,12 +6,12 @@
       "name": "addPost",
       "accounts": [
         {
-          "name": "authority",
+          "name": "postAccount",
           "isMut": true,
           "isSigner": true
         },
         {
-          "name": "postAccount",
+          "name": "authority",
           "isMut": true,
           "isSigner": true
         },
