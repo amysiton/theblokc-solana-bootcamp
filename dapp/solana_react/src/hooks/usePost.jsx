@@ -38,8 +38,7 @@ export function usePost() {
         return provider;
     }
     
-    const getProgram = () => {
-        const provider = getProvider();
+    const getProgram = (provider) => {
         const parsedIdl = JSON.parse(JSON.stringify(idl));
         const program = new anchor.Program(parsedIdl, idl.metadata.address, provider);
         
@@ -47,11 +46,14 @@ export function usePost() {
     }
 
     const addPost = async() => {
-        const program = getProgram();
+        const provider = getProvider();
+        const program = getProgram(provider);
         const [profilePda, _profileBump] = findProgramAddressSync(
             [anchorWallet.publicKey.toBytes()], 
             postAccount.publicKey
         );
+
+        // const profile = 
 
         try {
             setTransactionPending(true);
@@ -61,20 +63,17 @@ export function usePost() {
                 date: date
             }]);
 
-            // console.log("62 program ", program);
-
+            console.log("62 prog ", program);
             const tx = await program.methods
-                .addPost([value, date])
+                .addPost([provider.wallet.publicKey, value, date])
                 .accounts({
-                    authority: wallet.publicKey,
                     postAccount: profilePda.publicKey,
+                    authority: provider.wallet.publicKey,
                     systemProgram: SystemProgram.programId,
-                });
+                })
+                .rpc();
 
-
-            
                 console.log("57 Transaction Signature: ", tx);
-                // alert("Transaction Completed");
         } catch(err) {
             console.log(err)
         } finally {
@@ -83,10 +82,11 @@ export function usePost() {
     }
 
     const getPost = async() => {
-        const program = getProgram();
+        const provider = getProvider();
+        const program = getProgram(provider);
         const [profilePda, _profileBump] = findProgramAddressSync(
             [wallet.publicKey.toBytes()], 
-            postAccount
+            postAccount.publicKey
         );
 
         try {
@@ -96,7 +96,7 @@ export function usePost() {
 
             // setPost(account);
             console.log("84 account posts: ", account);
-            // posts.unshift([post]);
+            posts.unshift([post]);
 
         } catch(err) {
             console.log(err);
@@ -115,9 +115,11 @@ export function usePost() {
     useEffect(() => {
         if (wallet.connected) getPost();
 
+        // console.table(posts);
+
         // console.log(program().methods);
 
-      }, [posts, wallet.connected]);
+      }, [post, wallet.connected]);
 
     return { addPost, getPost, handleInputChange, transactionPending, loading, posts, post }
 }

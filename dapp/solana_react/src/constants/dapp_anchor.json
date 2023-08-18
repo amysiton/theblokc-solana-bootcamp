@@ -40,10 +40,6 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "authority",
-            "type": "publicKey"
-          },
-          {
             "name": "content",
             "type": "string"
           },
