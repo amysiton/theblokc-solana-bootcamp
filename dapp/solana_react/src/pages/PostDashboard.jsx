@@ -1,43 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Header } from "../components/Header";
 import { usePost } from "../hooks/usePost";
 import { useWallet } from "@solana/wallet-adapter-react";
 
 export const PostDashboard = () => {
     // const {connected, select} = useWallet();
-    const { addPost, getPost, handleInputChange, transactionPending, loading, posts, post, initialize } = usePost();
+    const { addPost, handleInputChange, transactionPending, posts, value } = usePost();
 
     const wallet = useWallet();
-    // window.Buffer = buffer.Buffer;
-
-    // const [walletAddress, setWalletAddress] = useState("");
-
-    // window.Buffer = buffer.Buffer;
-
-    useEffect(() => {
-        // getPost();
-    },);
 
     return (
-        <div className="app h-screen bg-slate-950 w-full max-w-full">
+        <div className="app h-screen bg-slate-950 w-full max-w-full p-5">
             <Header />
 
             { wallet.connected ? (
                 <>
-                    <div className="form w-1/3 bg-white p-4 mx-auto">
-                    <input 
-                        className="btn-create bg-violet-600 hover:bg-violet-800 mt-4 px-4 py-2 font-semibold text-sm bg-violet-500 text-white rounded-full shadow-sm hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
-                        onClick={getPost}
-                        value="Refresh"
-                        type="button"
-                    />
-
+                    <div className="form w-full md:w-1/3 bg-white p-4 mx-auto">
                         <form>
                             <label className="block">
                                 <textarea 
                                     type="text" 
                                     placeholder="What's on your mind?"
-                                    // value={post || ""}
+                                    value={value || ""}
                                     onChange={(event) => {
                                         handleInputChange(event)
                                     }}
@@ -65,8 +49,8 @@ export const PostDashboard = () => {
                                 return (
                                     <div className="w-full my-2 mb-3" key={id}>
                                         <div className="bg-white w-full p-5 rounded-md">
-                                            <p className="mb-1">{item.content}</p>
-                                            <p className="text-slate-400 italic text-sm">{item.date}</p>
+                                            <p className="mb-1">{item[0].content}</p>
+                                            <p className="text-slate-400 italic text-sm">{item[0].date}</p>
                                         </div>
                                     </div>
                                 )
