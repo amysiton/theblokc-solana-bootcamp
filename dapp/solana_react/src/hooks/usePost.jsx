@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as anchor from "@project-serum/anchor";
 import * as buffer from "buffer";
 
@@ -14,7 +14,6 @@ export function usePost() {
     const { wallet } = useWallet(); // for UI state e.g: wallet name, wallet connected
     const anchorWallet = useAnchorWallet(); // for AnchorProvider
     const baseAccount = Keypair.generate();
-    const programId = new anchor.web3.PublicKey(idl.metadata.address);
 
     const [transactionPending, setTransactionPending] = useState(false);
     const [value, setValue] = useState("");
