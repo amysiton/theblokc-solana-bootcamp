@@ -17,7 +17,6 @@ export function usePost() {
     const [transactionPending, setTransactionPending] = useState(false);
     const [value, setValue] = useState("");
     const [date, setDate] = useState("");
-    const [post, setPost] = useState([]);
     const baseAccount = Keypair.generate();
     window.Buffer = buffer.Buffer;
 
@@ -64,16 +63,10 @@ export function usePost() {
                     const account = getAccount(program, baseAccount.publicKey);    
                     const data = Promise.resolve(account);
                     data.then(item => {
-                        const itemDetails = setPost({
-                            content: item.value,
-                            date: item.date,
-                        })
                         posts.unshift([item]);
-                        console.table("67 ", posts);
                     }).catch((err) => {
                         console.log(err);
                     }).finally(() => {
-                        setPost([]);
                     });
                 }, 1000);
 
