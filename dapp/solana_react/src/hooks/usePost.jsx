@@ -13,11 +13,12 @@ export function usePost() {
     const { connection } = useConnection();
     const { wallet } = useWallet(); // for UI state e.g: wallet name, wallet connected
     const anchorWallet = useAnchorWallet(); // for AnchorProvider
-    const baseAccount = Keypair.generate();
-
+    
     const [transactionPending, setTransactionPending] = useState(false);
     const [value, setValue] = useState("");
     const [date, setDate] = useState("");
+    const [post, setPost] = useState([]);
+    const baseAccount = Keypair.generate();
     window.Buffer = buffer.Buffer;
 
     const getProvider = () => {
@@ -59,17 +60,34 @@ export function usePost() {
 
                 console.log("Transaction Signature: ", tx);
 
-                if (tx) {
-                    const account = await program.account.postAccount.fetch(new anchor.web3.PublicKey(baseAccount.publicKey));
+                setTimeout(function(){
+                    const account = getAccount(program, baseAccount.publicKey);    
+                    const data = Promise.resolve(account);
+                    data.then(item => {
+                        const itemDetails = setPost({
+                            content: item.value,
+                            date: item.date,
+                        })
+                        posts.unshift([item]);
+                        console.table("67 ", posts);
+                    }).catch((err) => {
+                        console.log(err);
+                    }).finally(() => {
+                        setPost([]);
+                    });
+                }, 1000);
 
-                    posts.unshift([account]);
-                    console.log("Account posts: ", account);
-                }
         } catch(err) {
             console.log(err)
         } finally {
             setTransactionPending(false);
+            setValue("");
+            setDate("");
         }
+    }
+
+    const getAccount = async(program, account) => {
+        return await program.account.postAccount.fetch(account);
     }
 
     const handleInputChange = (event) => {
