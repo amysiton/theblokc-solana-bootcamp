@@ -62,11 +62,15 @@ export function usePost() {
                 setTimeout(function(){
                     const account = getAccount(program, baseAccount.publicKey);    
                     const data = Promise.resolve(account);
+                    setTransactionPending(true);
+
                     data.then(item => {
                         posts.unshift([item]);
+                        console.table("67 ", posts);
                     }).catch((err) => {
                         console.log(err);
                     }).finally(() => {
+                        setTransactionPending(false);
                     });
                 }, 1000);
 
